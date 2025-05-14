@@ -1,2 +1,2205 @@
-# propdftoolkit
-Free Online PDF Toolkit - Convert Images to PDF, Merge, Split, View, Compress PDFs. Secure, No Upload, 100% Client-Side. Best PDF tools for students, professionals, and businesses in USA, UK, Canada &amp; more.PDF tools online  Free PDF editor  JPG to PDF converter  Merge PDF files  Split PDF pages  Compress PDF size  PDF toolkit for students  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro PDF Toolkit - Convert, View, Merge, Split, Compress PDFs Online</title>
+    <meta name="description" content="Your ultimate free online PDF toolkit. Convert images to PDF, view PDFs, merge multiple PDFs, split pages, and compress PDF files directly in your browser. Fast, easy, secure, and client-side.">
+    <meta name="keywords" content="PDF toolkit, image to PDF, PDF reader, merge PDF, split PDF, compress PDF, online PDF tools, convert JPG to PDF, view PDF online, free PDF editor, secure PDF tools, client-side PDF, reduce PDF size, optimize PDF">
+    <meta name="author" content="Pro PDF Toolkit Team"> <!-- Or Your Name/Website Name -->
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-website-url.com/"> <!-- !!! REPLACE with your actual URL !!! -->
+    <meta property="og:title" content="Pro PDF Toolkit - Free Online PDF Tools">
+    <meta property="og:description" content="Convert, view, merge, split, and compress PDFs securely in your browser. Fast, easy, and 100% client-side.">
+    <meta property="og:image" content="https://your-website-url.com/og-image.png"> <!-- !!! REPLACE with a link to a preview image (e.g., 1200x630px) !!! -->
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://your-website-url.com/"> <!-- !!! REPLACE with your actual URL !!! -->
+    <meta property="twitter:title" content="Pro PDF Toolkit - Free Online PDF Tools">
+    <meta property="twitter:description" content="Convert, view, merge, split, and compress PDFs securely in your browser. Fast, easy, and 100% client-side.">
+    <meta property="twitter:image" content="https://your-website-url.com/twitter-image.png"> <!-- !!! REPLACE with a link to a preview image (e.g., 1200x600px) !!! -->
+
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- PDF.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+    <!-- PDF-Lib Library -->
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+    <!-- Vanilla-Tilt.js (for 3D card effect) - deferred loading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js" defer></script>
+
+
+<style>
+    :root {
+        --primary-color: #4a00e0; /* Vibrant Purple */
+        --secondary-color: #8e2de2; /* Lighter Purple */
+        --accent-color: #00c6ff; /* Bright Blue */
+        --accent-hover-color: #00a8e0; /* Darker Accent for hover */
+        --light-color: #f0f4f8; /* Lighter, slightly bluish white */
+        --dark-color: #232931; /* Darker, softer black */
+        --text-color: #e0e6eb;
+        --bg-glass: rgba(35, 41, 49, 0.3); /* Darker, more translucent glass */
+        --border-glass: rgba(255, 255, 255, 0.1);
+        --success-color: #28a745;
+        --error-color: #dc3545;
+        --info-color: #17a2b8;
+        --font-main: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        --border-radius: 16px; /* Slightly larger for a softer look */
+        --box-shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+        --box-shadow-strong: 0 8px 30px rgba(0, 0, 0, 0.2);
+        --box-shadow-inset: inset 0 2px 4px rgba(0,0,0,0.2), inset 0 -2px 4px rgba(255,255,255,0.05);
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: var(--font-main);
+        background: linear-gradient(135deg, var(--dark-color) 0%, #393e46 50%, var(--secondary-color) 100%);
+        color: var(--text-color);
+        line-height: 1.7;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .app-container {
+        width: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Header & Navigation */
+    header {
+        background: rgba(20,20,30,0.6); /* Darker, more solid header */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 15px 5%;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+        animation: slideDown 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1280px; /* Slightly wider max-width */
+        margin: 0 auto;
+    }
+
+    .logo {
+        font-size: 2em;
+        font-weight: 700;
+        color: var(--light-color);
+        text-decoration: none;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+    .logo:hover {
+        transform: scale(1.05);
+        color: var(--accent-color);
+    }
+    .logo span {
+        color: var(--accent-color);
+        transition: color 0.3s ease;
+    }
+    .logo:hover span {
+        color: var(--light-color);
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .nav-links li {
+        margin-left: 25px;
+    }
+
+    .nav-links a {
+        color: var(--light-color);
+        text-decoration: none;
+        font-weight: 500; /* Slightly lighter weight */
+        padding: 10px 15px;
+        border-radius: 8px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        font-size: 1em;
+        position: relative;
+        overflow: hidden;
+    }
+    .nav-links a::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background-color: var(--accent-color);
+        transition: width 0.3s ease, left 0.3s ease;
+    }
+    .nav-links a:hover::before, .nav-links a.active::before {
+        width: 100%;
+        left: 0;
+    }
+    .nav-links a:hover, .nav-links a.active {
+        color: var(--accent-color);
+        background-color: transparent; /* Remove background highlight, rely on underline */
+    }
+    .nav-links a:active {
+        transform: scale(0.95);
+    }
+    
+    .mobile-nav-toggle {
+        display: none;
+        font-size: 1.8em;
+        color: var(--light-color);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        transition: color 0.3s ease;
+    }
+    .mobile-nav-toggle:hover {
+        color: var(--accent-color);
+    }
+
+    /* Main Content Area */
+    main {
+        flex-grow: 1;
+        padding: 40px 5%;
+        max-width: 1280px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .page-section {
+        display: none;
+        background-color: var(--bg-glass);
+        padding: 40px 50px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow-strong);
+        border: 1px solid var(--border-glass);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        animation: fadeInScaleUp 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        margin-bottom: 40px; 
+    }
+
+    .page-section.active {
+        display: block;
+    }
+
+    @keyframes fadeInScaleUp {
+        from { opacity: 0; transform: translateY(30px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .page-title {
+        font-size: 2.8em;
+        color: var(--light-color);
+        margin-bottom: 25px;
+        text-align: center;
+        font-weight: 700;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .page-title::after {
+        content: '';
+        display: block;
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent-color), var(--secondary-color));
+        margin: 12px auto 0;
+        border-radius: 2px;
+    }
+    .section-intro {
+        font-size: 1.1em;
+        color: var(--text-color);
+        text-align: center;
+        margin: -10px auto 30px auto;
+        max-width: 700px;
+        line-height: 1.8;
+    }
+
+
+    /* Home Page Specific */
+    #home-page .hero-content {
+        text-align: center;
+        padding: 50px 0;
+    }
+    #home-page .page-title { /* Already has a title style */
+        font-size: 3.5em; 
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+    #home-page .tagline {
+        font-size: 1.4em;
+        color: #d0d8e0;
+        margin-bottom: 35px;
+        font-weight: 300;
+    }
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 35px;
+        margin-top: 50px;
+    }
+    .feature-card {
+        background: rgba(40, 45, 55, 0.4); /* Slightly darker card bg */
+        padding: 30px;
+        border-radius: var(--border-radius);
+        text-align: center;
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: var(--box-shadow-light);
+        /* vanilla-tilt will handle transform, so initial state is important */
+        transform-style: preserve-3d; 
+    }
+    .feature-card:hover {
+        /* transform is handled by vanilla-tilt, but shadow can be enhanced */
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+    .feature-card .icon {
+        font-size: 3.5em; 
+        color: var(--accent-color);
+        margin-bottom: 20px;
+        text-shadow: 0 0 15px rgba(0, 198, 255, 0.5);
+    }
+    .feature-card h3 {
+        font-size: 1.6em;
+        color: var(--light-color);
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+    .feature-card p {
+        font-size: 1em;
+        color: #b8c0c8; /* Lighter paragraph text */
+        margin-bottom: 25px;
+        flex-grow: 1;
+        line-height: 1.7;
+    }
+    .feature-card .action-btn {
+        margin-top: auto;
+    }
+    /* For scroll animations */
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animate-on-scroll.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+    /* General Tool UI Elements */
+    .tool-container {
+        text-align: center;
+    }
+
+    .file-input-area {
+        margin: 30px auto;
+        padding: 30px; /* Increased padding */
+        border: 2px dashed var(--accent-color);
+        border-radius: var(--border-radius);
+        background-color: rgba(0,0,0,0.15);
+        max-width: 600px; /* Wider input area */
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        box-shadow: var(--box-shadow-inset);
+    }
+    .file-input-area:hover {
+        background-color: rgba(0,0,0,0.2);
+        border-color: var(--accent-hover-color);
+    }
+    .file-input-label {
+        display: inline-block;
+        padding: 15px 35px; /* Larger button */
+        background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        font-size: 1.15em;
+        box-shadow: 0 4px 15px rgba(0,198,255,0.2);
+    }
+    .file-input-label:hover {
+        background: linear-gradient(45deg, var(--accent-hover-color), #7b27c6); /* Darker gradient on hover */
+        box-shadow: 0 6px 20px rgba(0,198,255,0.4);
+        transform: translateY(-2px);
+    }
+    .file-input-label:active {
+        transform: translateY(0px) scale(0.98);
+        box-shadow: 0 2px 10px rgba(0,198,255,0.3);
+    }
+    input[type="file"] {
+        display: none;
+    }
+    .file-info, .options-info {
+        font-size: 0.95em;
+        color: #aab0b8; /* Lighter info text */
+        margin-top: 15px;
+    }
+
+    .image-preview-container, .pdf-viewer-container, .file-list-display {
+        margin-top: 30px;
+        background-color: rgba(0,0,0,0.1);
+        padding: 25px;
+        border-radius: var(--border-radius);
+        min-height: 120px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px; /* Increased gap */
+        justify-content: center;
+        align-items: flex-start; /* Changed from center to flex-start for remove button consistency */
+        border: 1px solid var(--border-glass);
+        color: var(--text-color);
+        box-shadow: var(--box-shadow-inset);
+    }
+    .file-list-display p { margin-bottom: 8px; }
+    .file-list-display span {
+        background-color: rgba(255,255,255,0.1);
+        padding: 8px 12px; /* Larger pills */
+        border-radius: 6px;
+        font-size: 0.95em;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin: 4px; /* Added margin for better spacing when wrapped */
+        display: inline-block; /* Ensure margins apply correctly */
+    }
+
+    /* Styles for Image to PDF Preview Items & Remove Button */
+    .image-preview-item {
+        position: relative;
+        display: inline-flex; /* Use flex for easier alignment if needed */
+        flex-direction: column; /* Stack image and info if any */
+        align-items: center;
+        margin: 10px; /* Spacing between items */
+        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .image-preview-item img {
+        max-width: 130px;
+        max-height: 130px;
+        border-radius: 10px;
+        border: 2px solid var(--border-glass);
+        object-fit: cover;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease;
+        display: block; /* Remove extra space below image */
+    }
+    .image-preview-item img:hover {
+        transform: scale(1.05);
+    }
+    .remove-image-btn {
+        position: absolute;
+        top: -8px;   /* Position slightly outside the image */
+        right: -8px; /* Position slightly outside the image */
+        background-color: rgba(220, 53, 69, 0.85); /* var(--error-color) with good opacity */
+        color: white;
+        border: 1px solid rgba(255,255,255,0.6);
+        border-radius: 50%; /* Circular button */
+        width: 28px;  /* Slightly larger for easier click */
+        height: 28px; /* Slightly larger for easier click */
+        font-size: 18px; /* Adjust for '×' size */
+        font-weight: bold;
+        line-height: 26px; /* Vertically center '×' */
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        transition: background-color 0.2s ease, transform 0.2s ease;
+        z-index: 10; /* Ensure it's above the image */
+        padding: 0; /* Remove default button padding */
+    }
+    .remove-image-btn:hover {
+        background-color: var(--error-color); /* Solid error color on hover */
+        transform: scale(1.1);
+    }
+    .remove-image-btn:focus {
+        outline: 2px solid var(--accent-color); /* Accessibility focus */
+        outline-offset: 1px;
+    }
+    @keyframes popIn {
+        from { transform: scale(0.3) rotate(-15deg); opacity: 0; }
+        to { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+
+    .pdf-page-canvas {
+        border: 1px solid var(--dark-color);
+        margin-bottom: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+    }
+    
+    .options-container {
+        margin: 25px auto;
+        padding: 20px;
+        background-color: rgba(0,0,0,0.15);
+        border-radius: var(--border-radius);
+        max-width: 550px;
+        text-align: left;
+        box-shadow: var(--box-shadow-inset);
+    }
+    .options-container label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: var(--light-color);
+    }
+    .options-container input[type="text"],
+    .options-container input[type="number"],
+    .options-container select {
+        width: 100%;
+        padding: 12px 15px; /* More padding */
+        margin-bottom: 18px;
+        border-radius: 8px;
+        border: 1px solid var(--border-glass);
+        background-color: rgba(255,255,255,0.08); /* Slightly less transparent */
+        color: var(--light-color);
+        font-family: var(--font-main);
+        font-size: 1em;
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+    .options-container input[type="text"]::placeholder,
+    .options-container input[type="number"]::placeholder { color: #a0a0a0; } /* Lighter placeholder */
+    .options-container input:focus, .options-container select:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        background-color: rgba(255,255,255,0.12);
+    }
+
+
+    .action-btn {
+        padding: 15px 35px; /* Matched file input label */
+        font-size: 1.15em; /* Matched file input label */
+        background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+        color: white;
+        border: none;
+        border-radius: 10px; /* Matched file input label */
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        margin-top: 30px;
+        box-shadow: 0 4px 15px rgba(0,198,255,0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .action-btn:hover:not(:disabled) {
+        background: linear-gradient(45deg, var(--accent-hover-color), #7b27c6);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(0,198,255,0.5);
+    }
+    .action-btn:disabled {
+        background: #555c66; /* Darker disabled */
+        color: #999;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+    .action-btn:active:not(:disabled) {
+        transform: translateY(0px) scale(0.98);
+        box-shadow: 0 2px 10px rgba(0,198,255,0.3);
+    }
+    
+    .status-message {
+        margin-top: 25px;
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-size: 1.05em;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        backdrop-filter: blur(5px);
+    }
+    .status-message.success { background-color: rgba(40, 167, 69, 0.3); color: #e6fff0; border: 1px solid var(--success-color); }
+    .status-message.error { background-color: rgba(220, 53, 69, 0.3); color: #fce8ea; border: 1px solid var(--error-color); }
+    .status-message.info { background-color: rgba(23, 162, 184, 0.3); color: #e3f7fb; border: 1px solid var(--info-color); }
+    .status-message .icon { margin-right: 12px; font-size: 1.3em; } 
+
+    .loader {
+        border: 5px solid #555c66; /* Darker base for loader */
+        border-top: 5px solid var(--accent-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 0.8s linear infinite; /* Faster spin */
+        margin: 20px auto;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .pdf-controls {
+        margin: 25px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+    .pdf-controls button {
+        background-color: var(--accent-color);
+        color: var(--dark-color); /* Changed to dark for better contrast on accent */
+        border: none;
+        padding: 12px 22px; /* Larger buttons */
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .pdf-controls button:hover:not(:disabled) {
+        background-color: var(--accent-hover-color);
+        transform: translateY(-2px);
+    }
+    .pdf-controls button:disabled {
+        background-color: #555c66;
+        color: #aaa;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    .pdf-controls span {
+        font-size: 1.05em;
+        color: var(--light-color);
+        padding: 0 10px;
+    }
+    
+    /* Static Pages (Privacy, Contact) */
+    .static-content h3 {
+        color: var(--accent-color);
+        margin-top: 25px;
+        margin-bottom: 12px;
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+    .static-content p, .static-content ul {
+        margin-bottom: 18px;
+        color: #c0c8d0; /* Lighter text for static content */
+        font-size: 1.05em;
+    }
+    .static-content ul {
+        list-style-position: inside;
+        padding-left: 20px;
+    }
+    .static-content ul li::marker {
+        color: var(--accent-color);
+    }
+    .static-content a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .static-content a:hover {
+        text-decoration: underline;
+        color: var(--accent-hover-color);
+    }
+
+    /* Contact Form */
+    .contact-form label {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--light-color);
+        font-weight: 600;
+    }
+    .contact-form input[type="text"],
+    .contact-form input[type="email"],
+    .contact-form textarea {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border-glass);
+        background-color: rgba(255,255,255,0.08);
+        color: var(--light-color);
+        font-family: var(--font-main);
+        font-size: 1em;
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+    .contact-form input[type="text"]::placeholder,
+    .contact-form input[type="email"]::placeholder,
+    .contact-form textarea::placeholder {
+        color: #888;
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        background-color: rgba(255,255,255,0.12);
+    }
+    .contact-form textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+    .contact-form button[type="submit"] {
+        display: inline-block; 
+    }
+
+    /* AdSense Placeholder Styling (Optional) */
+    .adsense-placeholder {
+        background-color: rgba(0,0,0,0.1);
+        border: 1px dashed var(--border-glass);
+        min-height: 90px; /* Common ad height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #777;
+        font-size: 0.9em;
+        margin: 30px auto;
+        border-radius: var(--border-radius);
+    }
+
+    /* Footer */
+    footer {
+        background: rgba(10,10,15,0.5); /* Darker footer */
+        text-align: center;
+        padding: 25px 5%;
+        margin-top: auto; 
+        color: #9098a0; /* Lighter footer text */
+        font-size: 0.95em;
+        border-top: 1px solid var(--border-glass);
+    }
+    footer a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    footer a:hover {
+        text-decoration: underline;
+        color: var(--accent-hover-color);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+        .nav-links li { margin-left: 15px; }
+        .nav-links a { font-size: 0.95em; padding: 8px 10px; }
+        .page-section { padding: 30px 30px; }
+    }
+
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none; 
+            flex-direction: column;
+            width: 100%;
+            position: absolute;
+            top: calc(100% - 1px); /* Position right below header */
+            left: 0;
+            background: rgba(20,20,30,0.95); /* Darker, more opaque mobile menu */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .nav-links.active { 
+            display: flex;
+        }
+        .nav-links li {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .nav-links a {
+            padding: 12px 20px;
+            display: block; /* Make links full width */
+        }
+        .nav-links a::before { /* Adjust mobile underline */
+             bottom: 5px;
+        }
+
+        .mobile-nav-toggle {
+            display: block; 
+        }
+
+        .page-title { font-size: 2.2em; }
+        .section-intro { font-size: 1em; }
+        #home-page .page-title { font-size: 2.8em; }
+        #home-page .tagline { font-size: 1.2em; }
+        .page-section { padding: 25px 20px; }
+        .features-grid { grid-template-columns: 1fr; gap: 25px; }
+        .action-btn, .file-input-label { font-size: 1.05em; padding: 14px 28px; }
+    }
+     @media (max-width: 480px) {
+        .logo { font-size: 1.6em; }
+        .page-title { font-size: 1.9em; }
+        .section-intro { font-size: 0.95em; }
+        #home-page .page-title { font-size: 2.2em; }
+        .image-preview-item img { max-width: 100px; max-height: 100px; }
+        .remove-image-btn { width: 24px; height: 24px; font-size: 16px; line-height: 22px; top:-5px; right:-5px;}
+        .pdf-controls { flex-direction: column; gap: 12px; }
+        .pdf-controls button { width: 100%; max-width: 280px; }
+        .options-container, .file-input-area { max-width: 100%; padding: 20px; }
+        .status-message { font-size: 0.95em; padding: 12px 15px; }
+    }
+
+</style>
+
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <nav>
+                <a href="#home" class="logo nav-link-item">Pro<span>PDF</span></a>
+                <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="#home" class="nav-link-item active">Home</a></li>
+                    <li><a href="#image-to-pdf" class="nav-link-item">Image to PDF</a></li>
+                    <li><a href="#pdf-reader" class="nav-link-item">PDF Reader</a></li>
+                    <li><a href="#merge-pdf" class="nav-link-item">Merge PDFs</a></li>
+                    <li><a href="#split-pdf" class="nav-link-item">Split PDF</a></li>
+                    <li><a href="#compress-pdf" class="nav-link-item">Compress PDF</a></li>
+                    <li><a href="#privacy" class="nav-link-item">Privacy</a></li>
+                    <li><a href="#contact" class="nav-link-item">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+<main>
+        <!-- Home Page Section -->
+        <section id="home-page" class="page-section active">
+            <div class="hero-content animate-on-scroll">
+                <h1 class="page-title">Pro PDF Toolkit: Your All-in-One PDF Solution</h1>
+                <p class="tagline">Effortlessly create, view, merge, split, and compress PDF files. All tools are free, secure, and operate directly in your browser – your files never leave your device.</p>
+            </div>
+
+            <!-- Optional AdSense Slot -->
+            <!-- <div class="adsense-placeholder animate-on-scroll">AdSense Ad Unit (e.g., Leaderboard)</div> -->
+
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll" data-tilt data-tilt-max="8" data-tilt-speed="400" data-tilt-perspective="1000">
+                    <div class="icon">🖼️✨</div>
+                    <h3>Image to PDF Converter</h3>
+                    <p>Seamlessly convert JPG, PNG, WEBP, and other images into a single, professional PDF. Perfect for portfolios, reports, or sharing image collections.</p>
+                    <button class="action-btn nav-link-item" data-target="image-to-pdf">Convert Images Now</button>
+                </div>
+                <div class="feature-card animate-on-scroll" data-tilt data-tilt-max="8" data-tilt-speed="400" data-tilt-perspective="1000">
+                    <div class="icon">📖🔍</div>
+                    <h3>Online PDF Reader</h3>
+                    <p>View your PDF documents instantly online. Our fast and intuitive reader provides smooth navigation without any software installation.</p>
+                    <button class="action-btn nav-link-item" data-target="pdf-reader">Open PDF Reader</button>
+                </div>
+                 <div class="feature-card animate-on-scroll" data-tilt data-tilt-max="8" data-tilt-speed="400" data-tilt-perspective="1000">
+                    <div class="icon">➕🔗</div>
+                    <h3>Merge PDFs</h3>
+                    <p>Combine multiple PDF files into one cohesive document. Easily organize reports, presentations, or research papers in your desired order.</p>
+                    <button class="action-btn nav-link-item" data-target="merge-pdf">Merge PDFs</button>
+                </div>
+                <div class="feature-card animate-on-scroll" data-tilt data-tilt-max="8" data-tilt-speed="400" data-tilt-perspective="1000">
+                    <div class="icon">✂️📄</div>
+                    <h3>Split PDF</h3>
+                    <p>Extract specific pages or page ranges from a PDF. Create new, smaller PDFs tailored to your needs, whether it's a single page or a chapter.</p>
+                    <button class="action-btn nav-link-item" data-target="split-pdf">Split Your PDF</button>
+                </div>
+                <div class="feature-card animate-on-scroll" data-tilt data-tilt-max="8" data-tilt-speed="400" data-tilt-perspective="1000">
+                    <div class="icon">🔩💨</div>
+                    <h3>Compress PDF</h3>
+                    <p>Reduce PDF file sizes for easier sharing and storage. Our smart tool re-compresses JPEG images while preserving text and vector quality.</p>
+                    <button class="action-btn nav-link-item" data-target="compress-pdf">Compress PDF</button>
+                </div>
+                <div class="feature-card animate-on-scroll" data-tilt data-tilt-max="8" data-tilt-speed="400" data-tilt-perspective="1000">
+                     <div class="icon">🛡️💻</div>
+                    <h3>Secure & Private</h3>
+                    <p>Your privacy is paramount. All PDF processing happens directly in your browser. Your files are never uploaded or stored on our servers.</p>
+                    <a href="#privacy" class="action-btn nav-link-item" style="background: var(--secondary-color);">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+<!-- Image to PDF Converter Section -->
+<section id="image-to-pdf-page" class="page-section">
+    <h2 class="page-title">Image to PDF Converter</h2>
+    <p class="section-intro">
+        Easily transform your images (JPG, PNG, WEBP, BMP, GIF) into a single, shareable PDF document. Select multiple images, preview them, remove any if needed, and generate your PDF in seconds.
+    </p>
+    <div class="tool-container">
+        <div class="file-input-area">
+            <label for="imageUpload" class="file-input-label">🖼️ Select Images</label>
+            <input type="file" id="imageUpload" accept="image/jpeg, image/png, image/gif, image/bmp, image/webp" multiple aria-label="Upload images for PDF conversion">
+            <p class="file-info">Supports JPG, PNG, GIF, BMP, WEBP. Drag & drop or click to select multiple files.</p>
+        </div>
+        <div id="imagePreview" class="image-preview-container">
+            <p>Your selected images will appear here for preview...</p>
+        </div>
+        <button id="generatePdfBtn" class="action-btn" disabled>Generate PDF</button>
+        <div id="imageToPdfStatus" class="status-message" style="display: none;"></div>
+        <!-- Optional AdSense Slot -->
+        <!-- <div class="adsense-placeholder">AdSense Ad Unit (e.g., Responsive)</div> -->
+    </div>
+</section>
+
+<!-- PDF Reader Section -->
+<section id="pdf-reader-page" class="page-section">
+    <h2 class="page-title">Online PDF Reader</h2>
+    <p class="section-intro">
+        View your PDF files directly in your browser without any hassle. Our PDF reader is fast, intuitive, and requires no downloads or installations. Just select your PDF and start reading.
+    </p>
+    <div class="tool-container">
+        <div class="file-input-area">
+            <label for="pdfUpload" class="file-input-label">📖 Select PDF File</label>
+            <input type="file" id="pdfUpload" accept=".pdf" aria-label="Upload PDF file to read">
+             <p class="file-info">Choose a PDF file from your device to view it online.</p>
+        </div>
+        <div id="pdfControls" class="pdf-controls" style="display: none;">
+            <button id="prevPageBtn" disabled aria-label="Previous Page">« Previous</button>
+            <span id="pageIndicator" aria-live="polite">Page <span id="currentPageNum">0</span> / <span id="totalPagesNum">0</span></span>
+            <button id="nextPageBtn" disabled aria-label="Next Page">Next »</button>
+        </div>
+        <div id="pdfViewer" class="pdf-viewer-container">
+            <p>Your PDF content will be rendered here for viewing...</p>
+        </div>
+        <div id="pdfReaderStatus" class="status-message" style="display: none;"></div>
+        <!-- Optional AdSense Slot -->
+        <!-- <div class="adsense-placeholder">AdSense Ad Unit (e.g., Responsive)</div> -->
+    </div>
+</section>
+
+<!-- Merge PDF Section -->
+<section id="merge-pdf-page" class="page-section">
+    <h2 class="page-title">Merge PDFs</h2>
+    <p class="section-intro">
+        Combine multiple PDF files into a single, organized document. Perfect for merging chapters of a book, different reports, or various scanned documents. Select your PDFs in the order you want them merged.
+    </p>
+    <div class="tool-container">
+        <div class="file-input-area">
+            <label for="mergePdfUpload" class="file-input-label">➕ Select PDFs to Merge</label>
+            <input type="file" id="mergePdfUpload" accept=".pdf" multiple aria-label="Upload PDF files to merge">
+            <p class="file-info">Select two or more PDF files. The order of selection will be the order of merging.</p>
+        </div>
+        <div id="mergeFileList" class="file-list-display">
+            <p>Selected PDF files for merging will be listed here...</p>
+        </div>
+        <button id="mergePdfBtn" class="action-btn" disabled>Merge PDFs</button>
+        <div id="mergePdfStatus" class="status-message" style="display: none;"></div>
+        <!-- Optional AdSense Slot -->
+        <!-- <div class="adsense-placeholder">AdSense Ad Unit (e.g., Responsive)</div> -->
+    </div>
+</section>
+
+<!-- Split PDF Section -->
+<section id="split-pdf-page" class="page-section">
+    <h2 class="page-title">Split PDF</h2>
+    <p class="section-intro">
+        Extract specific pages or ranges of pages from your PDF document. Create new, smaller PDF files by specifying which pages you need. Useful for isolating chapters, sections, or individual forms.
+    </p>
+    <div class="tool-container">
+        <div class="file-input-area">
+            <label for="splitPdfUpload" class="file-input-label">✂️ Select PDF to Split</label>
+            <input type="file" id="splitPdfUpload" accept=".pdf" aria-label="Upload PDF file to split">
+            <p class="file-info">Choose a single PDF file to extract pages from.</p>
+        </div>
+        <div class="options-container">
+            <label for="splitPageRanges">Page Ranges to Extract:</label>
+            <input type="text" id="splitPageRanges" placeholder="e.g., 1-3, 5, 8-10" aria-label="Enter page ranges for splitting">
+            <p class="options-info">Enter page numbers or ranges separated by commas. Use hyphens for ranges (e.g., 2-5). Pages are 1-indexed.</p>
+        </div>
+        <button id="splitPdfBtn" class="action-btn" disabled>Split PDF</button>
+        <div id="splitPdfStatus" class="status-message" style="display: none;"></div>
+        <!-- Optional AdSense Slot -->
+        <!-- <div class="adsense-placeholder">AdSense Ad Unit (e.g., Responsive)</div> -->
+    </div>
+</section>
+
+<!-- Compress PDF Section -->
+<section id="compress-pdf-page" class="page-section">
+    <h2 class="page-title">Compress PDF</h2>
+    <p class="section-intro">
+        Reduce the file size of your PDF documents for easier sharing via email or web. This tool intelligently re-compresses JPEG images within your PDF, while text and vector graphics retain their original quality and selectability.
+    </p>
+    <div class="tool-container">
+        <div class="file-input-area">
+            <label for="compressPdfUpload" class="file-input-label">🔩 Select PDF to Compress</label>
+            <input type="file" id="compressPdfUpload" accept=".pdf" aria-label="Upload PDF file to compress">
+            <p class="file-info">Choose a PDF file to reduce its size. Best for PDFs with many JPEGs.</p>
+        </div>
+        <div class="options-container">
+            <label for="compressQuality">JPEG Image Quality (0.1 - 1.0):</label>
+            <input type="number" id="compressQuality" value="0.75" step="0.05" min="0.1" max="1.0" aria-label="Set JPEG compression quality">
+            <p class="options-info">Lower values mean smaller JPEG size but lower image quality. Default: 0.75.</p>
+            <p class="options-info" style="color: var(--info-color); font-weight: 500;">Tip: This method intelligently re-compresses JPEG images within your PDF. Text, vector graphics, and non-JPEG images (like PNGs) will retain their original quality and selectability. Size reduction is most effective for PDFs containing large or unoptimized JPEGs.</p>
+        </div>
+        <button id="compressPdfBtn" class="action-btn" disabled>Compress PDF</button>
+        <div id="compressPdfStatus" class="status-message" style="display: none;"></div>
+        <!-- Optional AdSense Slot -->
+        <!-- <div class="adsense-placeholder">AdSense Ad Unit (e.g., Responsive)</div> -->
+    </div>
+</section>
+
+<!-- Privacy Policy Section -->
+<section id="privacy-page" class="page-section static-content">
+    <h2 class="page-title">Privacy Policy</h2>
+    <p><strong>Last Updated: <span class="currentDate"></span></strong></p>
+    <p>Welcome to Pro PDF Toolkit ("us", "we", or "our"). We are deeply committed to protecting your privacy and ensuring the security of your data. This Privacy Policy outlines how we handle information (or rather, the lack thereof) when you use our website and its comprehensive suite of PDF tools.</p>
+    
+    <h3>Our Core Privacy Principle: Client-Side Processing</h3>
+    <p>The most fundamental aspect of Pro PDF Toolkit's design is that <strong>all PDF creation, viewing, merging, splitting, and compression operations are performed entirely within your web browser (client-side)</strong>. This means:</p>
+    <ul>
+        <li><strong>No File Uploads:</strong> We <strong>do not</strong> upload your files (images or PDFs) to any external server. Your documents remain on your local device.</li>
+        <li><strong>No Data Storage:</strong> We <strong>do not</strong> store your files or any content extracted from your files on our servers. Once you close your browser tab or navigate away, the processed data is gone from the session.</li>
+        <li><strong>No Personal Information Collection:</strong> We <strong>do not</strong> collect any personal information like names, email addresses, or IP addresses through the direct use of our PDF tools.</li>
+    </ul>
+    <p>Your files are processed locally by your web browser's JavaScript engine, leveraging powerful open-source libraries. This ensures maximum privacy and security for your sensitive documents.</p>
+
+    <h3>Cookies and Tracking Technologies</h3>
+    <p>Pro PDF Toolkit does not use cookies for tracking users or collecting personal data. Any cookies that might be employed would be strictly for essential website functionality (e.g., remembering a preference if such a feature were implemented) and not for cross-site tracking or advertising purposes.</p>
+
+    <h3>Third-Party JavaScript Libraries</h3>
+    <p>Our website utilizes reputable third-party JavaScript libraries such as jsPDF, PDF.js, and PDF-Lib to provide its rich functionality. These libraries are typically loaded from well-known Content Delivery Networks (CDNs). While we select these libraries and CDNs for their reliability and security, their own privacy policies may apply to the data they inherently collect when delivering the library files (e.g., IP addresses for serving content, aggregated usage statistics). We encourage you to review the privacy policies of these CDNs (like Cloudflare, cdnjs, JSDelivr) if you have specific concerns.</p>
+
+    <h3>Data Security</h3>
+    <p>Since your files are not transmitted to or stored on our servers, the security of your data during processing relies on the security of your own computer, operating system, and web browser. We strongly recommend keeping your browser and OS updated with the latest security patches to ensure a secure environment for client-side processing.</p>
+
+    <h3>Google AdSense (If Applicable)</h3>
+    <p>If this website uses Google AdSense to display advertisements, Google and its partners may use cookies to serve ads based on a user's prior visits to this website or other websites. Google's use of advertising cookies enables it and its partners to serve ads to users based on their visit to this site and/or other sites on the Internet. Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">Ads Settings</a>. (You can also direct users to opt out of a third-party vendor's use of cookies for personalized advertising by visiting <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info/choices</a>).</p>
+    <p>Please note that Pro PDF Toolkit itself does not provide any user data to AdSense beyond what Google itself collects through its ad network.</p>
+
+    <h3>Changes to This Privacy Policy</h3>
+    <p>We may update our Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new Privacy Policy on this page and updating the "Last Updated" date. You are advised to review this Privacy Policy periodically for any changes.</p>
+
+    <h3>Contact Us</h3>
+    <p>If you have any questions, concerns, or feedback regarding this Privacy Policy or our privacy practices, please do not hesitate to <a href="#contact" class="nav-link-item">contact us</a>.</p>
+</section>
+
+<!-- Contact Us Section -->
+<section id="contact-us-page" class="page-section static-content">
+    <h2 class="page-title">Contact Us</h2>
+    <p class="section-intro">We value your feedback and are here to help! If you have any questions about Pro PDF Toolkit, encounter any issues, or have suggestions for new features, please reach out. We strive to make our tools as user-friendly and effective as possible.</p>
+    <form id="contactForm" class="contact-form">
+        <div>
+            <label for="contactName">Your Name:</label>
+            <input type="text" id="contactName" name="name" placeholder="e.g., Jane Doe" required aria-label="Your Name">
+        </div>
+        <div>
+            <label for="contactEmail">Your Email:</label>
+            <input type="email" id="contactEmail" name="email" placeholder="e.g., jane.doe@example.com" required aria-label="Your Email">
+        </div>
+        <div>
+            <label for="contactMessage">Message:</label>
+            <textarea id="contactMessage" name="message" placeholder="Let us know your thoughts, questions, or issues..." required aria-label="Your Message"></textarea>
+        </div>
+        <button type="submit" class="action-btn">Send Message</button>
+    </form>
+    <div id="contactFormStatus" class="status-message" style="display:none; margin-top: 20px;" aria-live="polite"></div>
+    
+    <div style="margin-top: 40px; text-align:center;">
+        <h3>Alternative Contact (Demo)</h3>
+        <p>While the form above is the quickest way for this demo, you can (hypothetically) also reach us at:</p>
+        <p><strong>Email:</strong> <a href="mailto:support@propdftoolkit.example.com">support@propdftoolkit.example.com</a> (This is a demo email)</p>
+        <p><strong>Address:</strong> 123 PDF Innovation Drive, Tech City, Webland (This is a demo address)</p>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <p>© <span id="currentYear"></span> Pro PDF Toolkit. All rights reserved. Client-side processing for maximum privacy.</p>
+    <p>
+        <a href="#privacy" class="nav-link-item">Privacy Policy</a> | 
+        <a href="#contact" class="nav-link-item">Contact Us</a>
+        <!-- Add a link to a sitemap if you create one -->
+        <!-- | <a href="/sitemap.xml">Sitemap</a> -->
+    </p>
+     <!-- Optional AdSense Slot in Footer -->
+    <!-- <div class="adsense-placeholder" style="max-width:728px; min-height:50px;">AdSense Ad Unit (e.g., Small Leaderboard)</div> -->
+</footer>
+
+</div>
+
+<script>
+// --- Basic Setup & Global Variables ---
+if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+} else {
+    console.error("PDF.js library not loaded! PDF Reader & some Image-to-PDF fallback might be affected.");
+}
+if (!window.PDFLib) {
+     console.error("PDF-Lib library not loaded! Merge, Split & smart Compress PDF functionality will be affected.");
+}
+if (!window.jspdf && document.getElementById('image-to-pdf-page')) { // Check if jspdf is needed and page exists
+     console.error("jsPDF library not loaded! Image to PDF functionality will be affected.");
+}
+
+
+document.getElementById('currentYear').textContent = new Date().getFullYear();
+const currentDateElements = document.querySelectorAll('.currentDate');
+currentDateElements.forEach(el => el.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+
+
+// --- SPA Navigation Logic ---
+const navLinks = document.querySelectorAll('.nav-link-item');
+const pageSections = document.querySelectorAll('.page-section');
+const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+const navMenu = document.querySelector('.nav-links');
+const homePageActionButtons = document.querySelectorAll('#home-page .action-btn.nav-link-item');
+
+
+function showPage(pageId) {
+    let pageFound = false;
+    pageSections.forEach(section => {
+        section.classList.remove('active');
+        // Match pageId (e.g. "home") with section.id ("home-page")
+        if (section.id.startsWith(pageId + "-page") || (pageId === "contact" && section.id === "contact-us-page") || (pageId === "home" && section.id === "home-page") ) {
+            section.classList.add('active');
+            pageFound = true;
+        }
+    });
+
+    if (!pageFound && pageId !== 'home') { // Fallback to home if specific page not found by ID logic
+        document.getElementById('home-page')?.classList.add('active');
+    } else if (!pageFound && pageId === 'home') {
+         document.getElementById('home-page')?.classList.add('active');
+    }
+
+
+    // Update active link in nav
+    document.querySelectorAll('header .nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${pageId}` || (link.dataset.target === pageId) ) {
+            link.classList.add('active');
+        }
+    });
+    window.scrollTo(0,0); 
+    if (navMenu.classList.contains('active')) { 
+        navMenu.classList.remove('active');
+        mobileNavToggle.setAttribute('aria-expanded', 'false');
+        mobileNavToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
+    }
+}
+
+function handleNavClick(event) {
+    let targetElement = event.target;
+    // Traverse up to find the .nav-link-item if the click was on an icon/text inside
+    while (targetElement != null && !targetElement.classList.contains('nav-link-item')) {
+        targetElement = targetElement.parentElement;
+    }
+
+    if (targetElement && targetElement.classList.contains('nav-link-item')) {
+        event.preventDefault();
+        let pageId;
+        if (targetElement.hasAttribute('data-target')) { 
+             pageId = targetElement.getAttribute('data-target');
+        } else { 
+             pageId = targetElement.getAttribute('href')?.substring(1); 
+        }
+        
+        if (pageId) {
+            showPage(pageId);
+            // Update URL hash, but only if it's a valid page to prevent broken history
+            const validPageIds = Array.from(pageSections).map(s => s.id.replace('-page','').replace('-us',''));
+            if (validPageIds.includes(pageId)) {
+                window.location.hash = pageId;
+            } else if (pageId === 'home'){
+                 window.location.hash = pageId; // Always allow home
+            }
+        }
+    }
+}
+
+document.querySelector('header nav').addEventListener('click', handleNavClick);
+document.querySelector('footer').addEventListener('click', handleNavClick); 
+homePageActionButtons.forEach(btn => btn.addEventListener('click', handleNavClick));
+
+mobileNavToggle.addEventListener('click', () => {
+    const isExpanded = navMenu.classList.toggle('active');
+    mobileNavToggle.setAttribute('aria-expanded', isExpanded);
+    if (isExpanded) {
+        mobileNavToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`; // Close icon
+    } else {
+        mobileNavToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`; // Menu icon
+    }
+});
+
+function routeInitial() {
+    let hash = window.location.hash.substring(1);
+    const validPageIds = Array.from(pageSections).map(s => s.id.replace('-page','').replace('-us',''));
+    if (!hash || !validPageIds.includes(hash)) {
+        hash = 'home';
+    }
+    showPage(hash);
+     if (hash !== 'home' && validPageIds.includes(hash)) { // Ensure hash is clean
+        window.location.hash = hash;
+    } else if (hash === 'home') {
+        history.replaceState(null, null, window.location.pathname + '#home');
+    } else {
+        history.replaceState(null, null, window.location.pathname + ' '); // Clears hash without adding to history
+        showPage('home');
+    }
+}
+window.addEventListener('DOMContentLoaded', () => {
+    routeInitial();
+    // Initialize Vanilla Tilt for feature cards
+    if (typeof VanillaTilt !== 'undefined') {
+        VanillaTilt.init(document.querySelectorAll(".feature-card"), {
+            max: 8,
+            speed: 400,
+            perspective: 1000,
+            glare: true,
+            "max-glare": 0.15
+        });
+    } else {
+        console.warn("VanillaTilt.js not loaded. 3D card tilt effect disabled.");
+    }
+
+    // Intersection Observer for scroll animations
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries, observerInstance) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observerInstance.unobserve(entry.target); // Optional: stop observing once visible
+                }
+            });
+        }, { threshold: 0.1 }); // Trigger when 10% of the element is visible
+
+        animatedElements.forEach(el => observer.observe(el));
+    } else { // Fallback for older browsers
+        animatedElements.forEach(el => el.classList.add('is-visible'));
+    }
+});
+window.addEventListener('hashchange', routeInitial);
+
+
+// --- Helper function for status messages ---
+function displayStatus(element, type, message, autoHide = true) {
+    if (!element) {
+        console.error("Status element not found for message:", message);
+        return;
+    }
+    let iconHtml = '';
+    if (type === 'success') iconHtml = `<span class="icon" role="img" aria-label="Success">✔️ </span>`; 
+    else if (type === 'error') iconHtml = `<span class="icon" role="img" aria-label="Error">❌ </span>`;   
+    else if (type === 'info') iconHtml = `<span class="icon" role="img" aria-label="Information">ℹ️ </span>`;    
+    
+    element.innerHTML = iconHtml + message;
+    element.className = `status-message ${type}`; 
+    element.style.display = 'flex'; 
+    element.setAttribute('role', 'alert');
+
+    // Clear any existing timeout for this element
+    if (element.dataset.statusTimeoutId) {
+        clearTimeout(parseInt(element.dataset.statusTimeoutId));
+    }
+
+    if (autoHide) {
+        const timeoutDuration = (type === 'error') ? 10000 : 7000;
+        const timeoutId = setTimeout(() => {
+            // Check if the message is still the same one we set, to avoid hiding a newer message
+            if (element.innerHTML.includes(message.substring(0,50))) { // Check part of message
+                 element.style.display = 'none';
+                 element.removeAttribute('role');
+            }
+        }, timeoutDuration);
+        element.dataset.statusTimeoutId = timeoutId.toString();
+    }
+}
+
+// --- Helper function to trigger file download ---
+function triggerDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none'; // Hide the link
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// --- Image to PDF Converter Logic (REVISED) ---
+const imageUploadInput = document.getElementById('imageUpload');
+const imagePreviewDiv = document.getElementById('imagePreview');
+const generatePdfBtn = document.getElementById('generatePdfBtn');
+const imageToPdfStatus = document.getElementById('imageToPdfStatus');
+let selectedImages = []; // Array to store { src, type (e.g., 'JPEG'), name, originalFile }
+
+if (imageUploadInput) {
+    imageUploadInput.addEventListener('change', function(event) {
+        selectedImages = []; // Always reset
+        imagePreviewDiv.innerHTML = ''; // Clear previous previews
+        generatePdfBtn.disabled = true; // Disable by default
+
+        const files = event.target.files;
+
+        if (files.length === 0) {
+            imagePreviewDiv.innerHTML = '<p>No images selected. Please choose some images to convert.</p>';
+            if (imageToPdfStatus) imageToPdfStatus.style.display = 'none';
+            return;
+        }
+        
+        displayStatus(imageToPdfStatus, 'info', `<div class="loader" style="margin:0 10px 0 0;"></div>Processing ${files.length} image(s) for preview...`, false);
+        
+        let fileProcessingPromises = [];
+        let skippedFileNames = [];
+
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                fileProcessingPromises.push(new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        resolve({ 
+                            src: e.target.result, 
+                            type: file.type.split('/')[1].toUpperCase(), // e.g., JPEG, PNG
+                            name: file.name, 
+                            originalFile: file // Keep original file reference if needed later
+                        });
+                    };
+                    reader.onerror = () => {
+                        console.error(`Error reading file: ${file.name}`);
+                        reject({ name: file.name, reason: 'File read error' });
+                    };
+                    reader.readAsDataURL(file);
+                }));
+            } else {
+                skippedFileNames.push(file.name);
+            }
+        });
+
+        Promise.allSettled(fileProcessingPromises).then(results => {
+            let successfullyProcessedCount = 0;
+            let errorFileNames = [];
+
+            results.forEach(result => {
+                if (result.status === 'fulfilled' && result.value) {
+                    const imgData = result.value;
+                    selectedImages.push(imgData); // Add to global array of successfully read images
+
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'image-preview-item';
+
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imgData.src;
+                    imgElement.alt = `Preview of ${imgData.name}`;
+                    imgElement.title = imgData.name;
+                    previewItem.appendChild(imgElement);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-image-btn';
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.setAttribute('aria-label', `Remove ${imgData.name}`);
+                    removeBtn.dataset.fileName = imgData.name; // Unique identifier
+
+                    removeBtn.onclick = function() {
+                        const nameToRemove = this.dataset.fileName;
+                        selectedImages = selectedImages.filter(img => img.name !== nameToRemove);
+                        this.parentElement.remove(); // Remove the DOM element
+
+                        if (selectedImages.length === 0) {
+                            generatePdfBtn.disabled = true;
+                            imagePreviewDiv.innerHTML = '<p>Your selected images will appear here for preview...</p>';
+                            displayStatus(imageToPdfStatus, 'info', 'No images remaining.');
+                        } else {
+                            generatePdfBtn.disabled = false; // Still enabled if some images remain
+                            displayStatus(imageToPdfStatus, 'success', `${selectedImages.length} image(s) ready for PDF conversion.`);
+                        }
+                    };
+                    previewItem.appendChild(removeBtn);
+                    imagePreviewDiv.appendChild(previewItem);
+                    successfullyProcessedCount++;
+                } else if (result.status === 'rejected') {
+                    errorFileNames.push(result.reason.name || 'Unknown file');
+                }
+            });
+
+            if (selectedImages.length > 0) {
+                generatePdfBtn.disabled = false;
+                let statusMsg = `${selectedImages.length} image(s) ready for PDF conversion.`;
+                if (skippedFileNames.length > 0 || errorFileNames.length > 0) {
+                    const totalSkipped = skippedFileNames.length + errorFileNames.length;
+                    statusMsg += ` ${totalSkipped} file(s) were skipped due to errors or unsupported types.`;
+                }
+                displayStatus(imageToPdfStatus, 'success', statusMsg);
+            } else {
+                imagePreviewDiv.innerHTML = '<p>No valid images were selected or processed. Please choose JPG, PNG, GIF, BMP, or WEBP files.</p>';
+                let errorMsgText = 'No valid image files could be processed.';
+                if (skippedFileNames.length > 0) errorMsgText += ` Non-image files like '${skippedFileNames.join("', '")}' were skipped.`;
+                if (errorFileNames.length > 0) errorMsgText += ` Errors occurred with files like '${errorFileNames.join("', '")}'.`;
+                displayStatus(imageToPdfStatus, 'error', errorMsgText, false);
+            }
+        });
+    });
+}
+
+
+if (generatePdfBtn) {
+    generatePdfBtn.addEventListener('click', async function() {
+        if (selectedImages.length === 0) {
+            displayStatus(imageToPdfStatus, 'error', 'Please select at least one image to generate a PDF.');
+            return;
+        }
+        if (!window.jspdf || !window.jspdf.jsPDF) { // Check for jsPDF constructor
+            displayStatus(imageToPdfStatus, 'error', 'jsPDF library not loaded. Cannot create PDF.', false);
+            return;
+        }
+
+        displayStatus(imageToPdfStatus, 'info', '<div class="loader" style="margin:0 10px 0 0;"></div>Creating PDF, please wait... This might take a moment for many or large images.', false);
+        generatePdfBtn.disabled = true;
+
+        try {
+            const { jsPDF } = window.jspdf;
+            // Initialize with default A4 portrait. This will be adjusted for the first page.
+            const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' }); 
+            const A0_WIDTH_MM = 841; // Max page width
+            const A0_HEIGHT_MM = 1189; // Max page height
+            const DPI_CONVERSION_FACTOR = 25.4 / 72; // pixels to mm at 72 DPI
+
+            for (let i = 0; i < selectedImages.length; i++) {
+                const imgData = selectedImages[i];
+                const img = new Image();
+                img.src = imgData.src;
+                
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = (err) => reject(new Error(`Failed to load image: ${imgData.name}. Error: ${err}`));
+                });
+
+                const imgNaturalWidth = img.naturalWidth;
+                const imgNaturalHeight = img.naturalHeight;
+
+                // Determine optimal page orientation and dimensions for this image
+                let pageOrientation = imgNaturalWidth > imgNaturalHeight ? 'l' : 'p';
+                let targetPageWidth = imgNaturalWidth * DPI_CONVERSION_FACTOR;
+                let targetPageHeight = imgNaturalHeight * DPI_CONVERSION_FACTOR;
+
+                // Cap page size to A0 equivalent
+                if (targetPageWidth > A0_WIDTH_MM || targetPageHeight > A0_HEIGHT_MM) {
+                    const scaleX = A0_WIDTH_MM / targetPageWidth;
+                    const scaleY = A0_HEIGHT_MM / targetPageHeight;
+                    const scale = Math.min(scaleX, scaleY, 1.0); // Don't scale up if smaller than A0
+                    targetPageWidth *= scale;
+                    targetPageHeight *= scale;
+                }
+                targetPageWidth = Math.max(1, targetPageWidth); // Ensure positive dimensions
+                targetPageHeight = Math.max(1, targetPageHeight);
+
+
+                if (i === 0) {
+                    // For the first page, modify the PDF's internal page size directly
+                    pdf.internal.pageSize.width = pageOrientation === 'l' ? targetPageHeight : targetPageWidth;
+                    pdf.internal.pageSize.height = pageOrientation === 'l' ? targetPageWidth : targetPageHeight;
+                } else {
+                    // For subsequent images, add a new page with specific dimensions and orientation
+                    pdf.addPage(
+                        [pageOrientation === 'l' ? targetPageHeight : targetPageWidth, pageOrientation === 'l' ? targetPageWidth : targetPageHeight],
+                        pageOrientation
+                    );
+                }
+                
+                // Calculate image placement on the *current* page with margins
+                const margin = 10; // mm
+                const currentPageWidth = pdf.internal.pageSize.getWidth();
+                const currentPageHeight = pdf.internal.pageSize.getHeight();
+                const usableWidth = Math.max(1, currentPageWidth - 2 * margin);
+                const usableHeight = Math.max(1, currentPageHeight - 2 * margin);
+                
+                let newImgWidthOnPage, newImgHeightOnPage;
+                const aspectRatio = imgNaturalWidth / imgNaturalHeight;
+
+                if (usableWidth / aspectRatio <= usableHeight) { // Fit by width
+                    newImgWidthOnPage = usableWidth;
+                    newImgHeightOnPage = newImgWidthOnPage / aspectRatio;
+                } else { // Fit by height
+                    newImgHeightOnPage = usableHeight;
+                    newImgWidthOnPage = newImgHeightOnPage * aspectRatio;
+                }
+                
+                const x = margin + (usableWidth - newImgWidthOnPage) / 2;
+                const y = margin + (usableHeight - newImgHeightOnPage) / 2;
+
+                let imageFormat = imgData.type.toUpperCase(); // e.g., JPEG, PNG, WEBP
+                
+                // Handle image types not natively supported by jsPDF by converting via canvas
+                if (imageFormat === 'WEBP' || imageFormat === 'BMP' || imageFormat === 'GIF' || imageFormat === 'JFIF') {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = imgNaturalWidth;
+                    canvas.height = imgNaturalHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, imgNaturalWidth, imgNaturalHeight);
+                    try {
+                        const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.9); // Convert to JPEG
+                        pdf.addImage(jpegDataUrl, 'JPEG', x, y, newImgWidthOnPage, newImgHeightOnPage);
+                    } catch (canvasError) {
+                         console.warn(`Canvas conversion to JPEG failed for ${imgData.name}, trying PNG. Error: ${canvasError}`);
+                         // Fallback to PNG if JPEG conversion fails (e.g. transparency issues with GIF)
+                         const pngDataUrl = canvas.toDataURL('image/png');
+                         pdf.addImage(pngDataUrl, 'PNG', x, y, newImgWidthOnPage, newImgHeightOnPage);
+                    }
+                } else if (imageFormat === 'JPG') { // jsPDF expects 'JPEG'
+                     pdf.addImage(imgData.src, 'JPEG', x, y, newImgWidthOnPage, newImgHeightOnPage);
+                } else if (imageFormat === 'PNG') {
+                     pdf.addImage(imgData.src, 'PNG', x, y, newImgWidthOnPage, newImgHeightOnPage);
+                } else {
+                    // Fallback for other unknown types: attempt to add as JPEG via canvas
+                    console.warn(`Unsupported image type ${imageFormat} for ${imgData.name}, attempting conversion to JPEG.`);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = imgNaturalWidth;
+                    canvas.height = imgNaturalHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, imgNaturalWidth, imgNaturalHeight);
+                    const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                    pdf.addImage(jpegDataUrl, 'JPEG', x, y, newImgWidthOnPage, newImgHeightOnPage);
+                }
+            }
+            
+            const pdfBlob = pdf.output('blob');
+            triggerDownload(pdfBlob, 'ProPDFToolkit_Converted_Images.pdf');
+            displayStatus(imageToPdfStatus, 'success', 'PDF successfully created and downloaded!');
+            
+            selectedImages = [];
+            if (imageUploadInput) imageUploadInput.value = ''; 
+            if (imagePreviewDiv) imagePreviewDiv.innerHTML = '<p>Your selected images will appear here for preview...</p>';
+
+        } catch (error) {
+            console.error("PDF Generation Error:", error);
+            displayStatus(imageToPdfStatus, 'error', 'Error creating PDF: ' + (error.message || "Unknown error. Check console for details."), false);
+        } finally {
+            if(generatePdfBtn) generatePdfBtn.disabled = (selectedImages.length === 0); // Re-enable if there are still images, or keep disabled
+        }
+    });
+}
+
+// --- PDF Reader Logic ---
+const pdfUploadInput = document.getElementById('pdfUpload');
+const pdfViewerDiv = document.getElementById('pdfViewer');
+const pdfReaderStatus = document.getElementById('pdfReaderStatus');
+const pdfControlsDiv = document.getElementById('pdfControls');
+const prevPageBtn = document.getElementById('prevPageBtn');
+const nextPageBtn = document.getElementById('nextPageBtn');
+const currentPageNumSpan = document.getElementById('currentPageNum');
+const totalPagesNumSpan = document.getElementById('totalPagesNum');
+
+let currentPdfDoc = null;
+let readerCurrentPageNum = 1;
+let readerTotalPages = 0;
+let readerIsRenderingPage = false;
+
+if (pdfUploadInput) { // Check if element exists
+    pdfUploadInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file && file.type === 'application/pdf') {
+            displayStatus(pdfReaderStatus, 'info', '<div class="loader" style="margin:0 10px 0 0;"></div>Loading PDF...', false);
+            if (pdfViewerDiv) pdfViewerDiv.innerHTML = '<div class="loader"></div><p style="text-align:center; margin-top:10px;">Loading your PDF, please wait...</p>'; 
+            if (pdfControlsDiv) pdfControlsDiv.style.display = 'none';
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const typedarray = new Uint8Array(e.target.result);
+                loadAndRenderPdf(typedarray, file.name);
+            };
+            reader.onerror = () => {
+                displayStatus(pdfReaderStatus, 'error', 'Error reading the PDF file from your device.', false);
+                if (pdfViewerDiv) pdfViewerDiv.innerHTML = '<p>Could not read the selected PDF file.</p>';
+            };
+            reader.readAsArrayBuffer(file);
+        } else if (file) {
+            displayStatus(pdfReaderStatus, 'error', `"${file.name}" is not a valid PDF file. Please select a .pdf file.`);
+            if (pdfControlsDiv) pdfControlsDiv.style.display = 'none';
+            if (pdfViewerDiv) pdfViewerDiv.innerHTML = '<p>Your PDF content will be rendered here for viewing...</p>';
+            pdfUploadInput.value = ''; // Reset input
+        } else { 
+            if (pdfViewerDiv) pdfViewerDiv.innerHTML = '<p>Your PDF content will be rendered here for viewing...</p>';
+            if (pdfControlsDiv) pdfControlsDiv.style.display = 'none';
+            if (pdfReaderStatus) pdfReaderStatus.style.display = 'none';
+            currentPdfDoc = null;
+            readerCurrentPageNum = 1;
+            readerTotalPages = 0;
+        }
+    });
+}
+
+async function loadAndRenderPdf(pdfData, fileName = "PDF Document") {
+    try {
+        if (!pdfjsLib) {
+            displayStatus(pdfReaderStatus, 'error', 'PDF.js library is not loaded. Cannot read PDF.', false);
+            if (pdfViewerDiv) pdfViewerDiv.innerHTML = '<p>Error: PDF viewing library failed to load. Please refresh the page.</p>';
+            return;
+        }
+        currentPdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
+        readerTotalPages = currentPdfDoc.numPages;
+        readerCurrentPageNum = 1;
+        if (totalPagesNumSpan) totalPagesNumSpan.textContent = readerTotalPages;
+        if (pdfControlsDiv) pdfControlsDiv.style.display = 'flex';
+        if (pdfViewerDiv) pdfViewerDiv.innerHTML = ''; // Clear loader
+        await renderPdfPage(readerCurrentPageNum); // await this initial render
+        displayStatus(pdfReaderStatus, 'success', `PDF "${fileName}" ( ${readerTotalPages} pages) loaded successfully!`);
+    } catch (error) {
+        console.error("PDF Loading Error:", error);
+        let errorMessage = 'Error loading PDF: ';
+        if (error.name === 'PasswordException' || (error.message && error.message.toLowerCase().includes("password"))) {
+            errorMessage += 'The PDF is password-protected and cannot be opened without a password.';
+        } else if (error.name === 'InvalidPDFException') {
+            errorMessage += 'The file is not a valid PDF or is corrupted.';
+        } else {
+            errorMessage += (error.message || 'Unknown error. Please try a different file.');
+        }
+        displayStatus(pdfReaderStatus, 'error', errorMessage, false);
+        if (pdfControlsDiv) pdfControlsDiv.style.display = 'none';
+        if (pdfViewerDiv) pdfViewerDiv.innerHTML = `<p>Could not load PDF "${fileName}". It might be corrupted, password-protected, or an unsupported format.</p>`;
+    }
+}
+
+async function renderPdfPage(num) {
+    if (readerIsRenderingPage || !currentPdfDoc || num < 1 || num > readerTotalPages) return;
+    if (!pdfViewerDiv) return; // Guard if div is not present
+
+    readerIsRenderingPage = true;
+    
+    // Show loader only if we are changing page or if no canvas exists yet
+    if(pdfViewerDiv.querySelector('.pdf-page-canvas') === null || readerCurrentPageNum !== num){ 
+         pdfViewerDiv.innerHTML = '<div class="loader"></div><p style="text-align:center; margin-top:10px;">Rendering page, please wait...</p>';
+    }
+
+    try {
+        const page = await currentPdfDoc.getPage(num);
+        // Dynamically calculate scale based on container width, with min/max
+        const containerWidth = pdfViewerDiv.clientWidth > 0 ? pdfViewerDiv.clientWidth - 40 : 800; // Subtract padding/border
+        const viewportDefaultScale = page.getViewport({scale:1});
+        const scaleToFitWidth = containerWidth / viewportDefaultScale.width;
+        const viewportScale = Math.min(Math.max(0.25, scaleToFitWidth), 3.0); // Min scale 0.25, Max scale 3.0
+        
+        const viewport = page.getViewport({ scale: viewportScale });
+        
+        pdfViewerDiv.innerHTML = ''; // Clear previous content or loader
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-page-canvas';
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        
+        pdfViewerDiv.appendChild(canvas);
+
+        const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+        };
+        await page.render(renderContext).promise;
+        
+        readerCurrentPageNum = num; // Update current page number *after* successful render
+        if (currentPageNumSpan) currentPageNumSpan.textContent = num;
+        // Clear status only if it was related to loading this page, not a persistent error
+        if (pdfReaderStatus && pdfReaderStatus.classList.contains('info') && pdfReaderStatus.innerHTML.includes('Rendering')) {
+            pdfReaderStatus.style.display = 'none'; 
+        }
+        
+    } catch (error) {
+        console.error(`Error rendering page ${num}:`, error);
+        displayStatus(pdfReaderStatus, 'error', `Error rendering page ${num}. The PDF might be corrupted or use unsupported features.`, false);
+        pdfViewerDiv.innerHTML = `<p>Error rendering page ${num}. Try navigating or reloading the PDF.</p>`;
+    } finally {
+        readerIsRenderingPage = false;
+        updatePdfPageControls();
+    }
+}
+
+function updatePdfPageControls() {
+    if(prevPageBtn) prevPageBtn.disabled = (readerCurrentPageNum <= 1 || readerIsRenderingPage);
+    if(nextPageBtn) nextPageBtn.disabled = (readerCurrentPageNum >= readerTotalPages || readerIsRenderingPage);
+}
+
+if (prevPageBtn) {
+    prevPageBtn.addEventListener('click', () => {
+        if (readerCurrentPageNum > 1 && !readerIsRenderingPage) {
+            renderPdfPage(readerCurrentPageNum - 1);
+        }
+    });
+}
+
+if (nextPageBtn) {
+    nextPageBtn.addEventListener('click', () => {
+        if (readerCurrentPageNum < readerTotalPages && !readerIsRenderingPage) {
+            renderPdfPage(readerCurrentPageNum + 1);
+        }
+    });
+}
+
+
+// --- Merge PDF Logic ---
+const mergePdfUploadInput = document.getElementById('mergePdfUpload');
+const mergeFileListDiv = document.getElementById('mergeFileList');
+const mergePdfBtn = document.getElementById('mergePdfBtn');
+const mergePdfStatus = document.getElementById('mergePdfStatus');
+let selectedMergePdfs = []; 
+
+if (mergePdfUploadInput) { 
+    mergePdfUploadInput.addEventListener('change', function(event) {
+        const newFiles = Array.from(event.target.files).filter(file => file.type === 'application/pdf');
+        // If you want to append to existing selection, use:
+        // selectedMergePdfs = [...selectedMergePdfs, ...newFiles];
+        // For replacing selection:
+        selectedMergePdfs = newFiles; 
+
+        if (mergeFileListDiv) mergeFileListDiv.innerHTML = ''; 
+        mergePdfBtn.disabled = true; // Disable by default
+
+        if (selectedMergePdfs.length === 0 && event.target.files.length > 0) {
+            if (mergeFileListDiv) mergeFileListDiv.innerHTML = '<p>No valid PDF files selected. Please choose .pdf files only.</p>';
+            if (mergePdfStatus) displayStatus(mergePdfStatus, 'error', 'No valid PDF files found in selection.', false);
+            return;
+        }
+        if (selectedMergePdfs.length === 0) {
+            if (mergeFileListDiv) mergeFileListDiv.innerHTML = '<p>No PDF files selected. Choose at least two to merge.</p>';
+            if (mergePdfStatus) mergePdfStatus.style.display = 'none';
+            return;
+        }
+        
+        const p = document.createElement('p');
+        p.textContent = "Selected files (will be merged in this order):";
+        if (mergeFileListDiv) mergeFileListDiv.appendChild(p);
+        selectedMergePdfs.forEach((file, index) => {
+            const fileElement = document.createElement('span');
+            fileElement.textContent = `${index + 1}. ${file.name}`;
+            fileElement.title = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            if (mergeFileListDiv) mergeFileListDiv.appendChild(fileElement);
+        });
+
+        if (selectedMergePdfs.length < 2) {
+            displayStatus(mergePdfStatus, 'info', 'Please select at least two PDF files to merge.');
+        } else {
+            mergePdfBtn.disabled = false;
+            displayStatus(mergePdfStatus, 'success', `${selectedMergePdfs.length} PDF(s) selected. Ready to merge.`);
+        }
+    });
+}
+
+if (mergePdfBtn) { 
+    mergePdfBtn.addEventListener('click', async function() {
+        if (selectedMergePdfs.length < 2) {
+            displayStatus(mergePdfStatus, 'error', 'Please select at least two PDF files to merge.');
+            return;
+        }
+        if (!window.PDFLib) {
+            displayStatus(mergePdfStatus, 'error', 'PDF-Lib library not loaded. Cannot merge PDFs.', false);
+            return;
+        }
+
+        displayStatus(mergePdfStatus, 'info', '<div class="loader" style="margin:0 10px 0 0;"></div>Merging PDFs, please wait...', false);
+        mergePdfBtn.disabled = true;
+
+        try {
+            const { PDFDocument } = PDFLib;
+            const mergedPdf = await PDFDocument.create();
+
+            for (const file of selectedMergePdfs) {
+                displayStatus(mergePdfStatus, 'info', `<div class="loader" style="margin:0 10px 0 0;"></div>Processing ${file.name}...`, false);
+                const arrayBuffer = await file.arrayBuffer();
+                // Allow loading of encrypted PDFs if they don't have usage restrictions preventing merging
+                const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true }); 
+                const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                copiedPages.forEach(page => mergedPdf.addPage(page));
+            }
+
+            const mergedPdfBytes = await mergedPdf.save();
+            const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+            triggerDownload(blob, 'ProPDFToolkit_Merged_Output.pdf');
+
+            displayStatus(mergePdfStatus, 'success', 'PDFs merged successfully and downloaded!');
+            if (mergePdfUploadInput) mergePdfUploadInput.value = ''; 
+            if (mergeFileListDiv) mergeFileListDiv.innerHTML = '<p>Selected PDF files for merging will be listed here...</p>';
+            selectedMergePdfs = [];
+
+        } catch (error) {
+            console.error("Merge PDF Error:", error);
+            let errorMsg = 'Error merging PDFs: ';
+            if(error.message && (error.message.toLowerCase().includes("encrypted") || error.message.toLowerCase().includes("password"))) {
+                errorMsg += "One or more PDFs might be encrypted or password-protected, preventing merging. Please ensure they are decrypted.";
+            } else {
+                errorMsg += (error.message || "Unknown error. Check console.");
+            }
+            displayStatus(mergePdfStatus, 'error', errorMsg, false);
+        } finally {
+            // Keep button disabled after operation, user needs to re-select files
+            if (mergePdfBtn) mergePdfBtn.disabled = true; 
+        }
+    });
+}
+
+
+// --- Split PDF Logic ---
+const splitPdfUploadInput = document.getElementById('splitPdfUpload');
+const splitPageRangesInput = document.getElementById('splitPageRanges');
+const splitPdfBtn = document.getElementById('splitPdfBtn');
+const splitPdfStatus = document.getElementById('splitPdfStatus');
+let selectedSplitPdfFile = null;
+let totalPagesInSplitDoc = 0; 
+
+if (splitPdfUploadInput) { 
+    splitPdfUploadInput.addEventListener('change', async function(event) {
+        selectedSplitPdfFile = event.target.files[0];
+        totalPagesInSplitDoc = 0; 
+        splitPdfBtn.disabled = true; // Disable button until file is processed and ranges entered
+        if (splitPageRangesInput) {
+            splitPageRangesInput.placeholder = "e.g., 1-3, 5, 8-10";
+            splitPageRangesInput.value = ""; // Clear previous ranges
+        }
+
+
+        if (selectedSplitPdfFile && selectedSplitPdfFile.type === 'application/pdf') {
+            displayStatus(splitPdfStatus, 'info', `<div class="loader" style="margin:0 10px 0 0;"></div>Loading info for "${selectedSplitPdfFile.name}"...`, false);
+            
+            try {
+                if (!window.PDFLib && !window.pdfjsLib) throw new Error("PDF library (PDFLib or PDF.js) not available for page count.");
+                const arrayBuffer = await selectedSplitPdfFile.arrayBuffer();
+                let doc;
+
+                // Prefer PDFLib for consistency if available
+                if (window.PDFLib) {
+                     doc = await PDFLib.PDFDocument.load(arrayBuffer, {ignoreEncryption: true});
+                     totalPagesInSplitDoc = doc.getPageCount();
+                } else if (window.pdfjsLib) { // Fallback to PDF.js
+                     doc = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+                     totalPagesInSplitDoc = doc.numPages;
+                } else {
+                    throw new Error("No PDF library available to get page count.");
+                }
+                
+                if (totalPagesInSplitDoc > 0) {
+                    if (splitPageRangesInput) splitPageRangesInput.placeholder = `e.g., 1-3, 5 (Total: ${totalPagesInSplitDoc} pages)`;
+                    displayStatus(splitPdfStatus, 'success', `PDF "${selectedSplitPdfFile.name}" (${totalPagesInSplitDoc} pages) selected. Enter page ranges to extract.`);
+                    // Enable button if ranges are already valid (e.g. user re-selects file with ranges typed)
+                    if (splitPageRangesInput && splitPageRangesInput.value.trim() !== '') {
+                        splitPdfBtn.disabled = false;
+                    }
+                } else {
+                    throw new Error("PDF has no pages or page count is zero.");
+                }
+
+
+            } catch (err) {
+                console.error("Error getting page count for split:", err);
+                let errorMsg = `Could not read "${selectedSplitPdfFile.name}". `;
+                if (err.message && (err.message.toLowerCase().includes("encrypted") || err.message.toLowerCase().includes("password"))) {
+                    errorMsg += "It might be password-protected.";
+                } else {
+                    errorMsg += "It might be corrupted or an unsupported format.";
+                }
+                displayStatus(splitPdfStatus, 'error', errorMsg, false);
+                selectedSplitPdfFile = null;
+                splitPdfUploadInput.value = '';
+            }
+
+        } else {
+            selectedSplitPdfFile = null;
+            if (event.target.files[0]) { // If a file was selected but it's not PDF
+                displayStatus(splitPdfStatus, 'error', 'Invalid file type. Please select a .pdf file.');
+            } else { // No file selected or selection cleared
+                if (splitPdfStatus) splitPdfStatus.style.display = 'none';
+            }
+        }
+    });
+}
+
+if (splitPageRangesInput) { 
+    splitPageRangesInput.addEventListener('input', function() {
+        if (selectedSplitPdfFile && this.value.trim() !== '' && totalPagesInSplitDoc > 0) {
+            if (splitPdfBtn) splitPdfBtn.disabled = false;
+        } else {
+            if (splitPdfBtn) splitPdfBtn.disabled = true;
+        }
+    });
+}
+
+function parsePageRanges(rangeStr, maxPage) {
+    if (!rangeStr || rangeStr.trim() === "") throw new Error("Page range string is empty.");
+    if (maxPage <= 0) throw new Error("PDF has no pages or page count could not be determined.");
+    
+    const ranges = rangeStr.split(',');
+    const pagesToExtract = new Set(); 
+    for (const range of ranges) {
+        const trimmedRange = range.trim();
+        if (!trimmedRange) continue; 
+
+        if (trimmedRange.includes('-')) {
+            const parts = trimmedRange.split('-');
+            if (parts.length !== 2) throw new Error(`Invalid range format: "${trimmedRange}". Use "start-end".`);
+            
+            const start = parseInt(parts[0].trim(), 10);
+            const end = parseInt(parts[1].trim(), 10);
+
+            if (isNaN(start) || isNaN(end) || start < 1 || end < start || end > maxPage) {
+                throw new Error(`Invalid range: "${trimmedRange}". Start/end must be valid page numbers within 1-${maxPage}. Ensure start <= end.`);
+            }
+            for (let i = start; i <= end; i++) {
+                pagesToExtract.add(i - 1); // 0-indexed for PDFLib
+            }
+        } else {
+            const pageNum = parseInt(trimmedRange, 10);
+            if (isNaN(pageNum) || pageNum < 1 || pageNum > maxPage) {
+                throw new Error(`Invalid page number: "${trimmedRange}". Must be between 1 and ${maxPage}.`);
+            }
+            pagesToExtract.add(pageNum - 1); // 0-indexed for PDFLib
+        }
+    }
+    if (pagesToExtract.size === 0) throw new Error("No valid pages specified for extraction. Please check your input.");
+    return Array.from(pagesToExtract).sort((a, b) => a - b); // Sort for consistent output
+}
+
+if (splitPdfBtn) { 
+    splitPdfBtn.addEventListener('click', async function() {
+        if (!selectedSplitPdfFile) {
+            displayStatus(splitPdfStatus, 'error', 'Please select a PDF file to split.');
+            return;
+        }
+        const rangeStr = splitPageRangesInput ? splitPageRangesInput.value.trim() : '';
+        if (rangeStr === '') {
+            displayStatus(splitPdfStatus, 'error', 'Please enter page numbers or ranges to extract.');
+            return;
+        }
+        if (!window.PDFLib) {
+            displayStatus(splitPdfStatus, 'error', 'PDF-Lib library not loaded. Cannot split PDF.', false);
+            return;
+        }
+        if (totalPagesInSplitDoc === 0) { 
+            displayStatus(splitPdfStatus, 'error', 'Could not determine page count of the selected PDF. Please re-select the file.', false);
+            return;
+        }
+
+        displayStatus(splitPdfStatus, 'info', '<div class="loader" style="margin:0 10px 0 0;"></div>Splitting PDF, please wait...', false);
+        splitPdfBtn.disabled = true;
+
+        try {
+            const { PDFDocument } = PDFLib;
+            const arrayBuffer = await selectedSplitPdfFile.arrayBuffer();
+            const originalPdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+            const docTotalPages = originalPdf.getPageCount(); // Use this as the definitive count
+            
+            if (totalPagesInSplitDoc !== docTotalPages && totalPagesInSplitDoc !== 0) { // Initial count might differ slightly
+                console.warn(`Initial page count was ${totalPagesInSplitDoc}, final count from loaded PDF is ${docTotalPages}. Using final count.`);
+            }
+            if (docTotalPages === 0) throw new Error("The loaded PDF has 0 pages.");
+
+
+            const pagesToExtractIndices = parsePageRanges(rangeStr, docTotalPages); 
+
+            const newPdf = await PDFDocument.create();
+            const copiedPages = await newPdf.copyPages(originalPdf, pagesToExtractIndices);
+            copiedPages.forEach(page => newPdf.addPage(page));
+
+            if (newPdf.getPageCount() === 0) {
+                 throw new Error("No pages were extracted. This can happen if ranges are invalid or out of bounds after parsing, or if the selected pages could not be copied.");
+            }
+
+            const newPdfBytes = await newPdf.save();
+            const blob = new Blob([newPdfBytes], { type: 'application/pdf' });
+            
+            const originalFileNameNoExt = selectedSplitPdfFile.name.substring(0, selectedSplitPdfFile.name.lastIndexOf('.')) || selectedSplitPdfFile.name;
+            const rangeForFile = rangeStr.replace(/[^0-9,-]/g, '').replace(/,/g, '_').substring(0,30); // Sanitize and shorten for filename
+            triggerDownload(blob, `ProPDFToolkit_${originalFileNameNoExt}_split_p${rangeForFile}.pdf`);
+
+            displayStatus(splitPdfStatus, 'success', `PDF split successfully! Extracted ${newPdf.getPageCount()} page(s).`);
+             if (splitPdfUploadInput) splitPdfUploadInput.value = '';
+             if (splitPageRangesInput) splitPageRangesInput.value = '';
+             selectedSplitPdfFile = null;
+             totalPagesInSplitDoc = 0;
+        } catch (error) {
+            console.error("Split PDF Error:", error);
+            displayStatus(splitPdfStatus, 'error', 'Error splitting PDF: ' + (error.message || "Unknown error. Check console."), false);
+        } finally {
+             if (splitPdfBtn) splitPdfBtn.disabled = true; // Require re-selection or re-entry of ranges
+        }
+    });
+}
+
+
+// --- Compress PDF Logic ---
+const compressPdfUploadInput = document.getElementById('compressPdfUpload');
+const compressQualityInput = document.getElementById('compressQuality');
+const compressPdfBtn = document.getElementById('compressPdfBtn');
+const compressPdfStatus = document.getElementById('compressPdfStatus');
+let selectedCompressPdfFile = null;
+
+if (compressPdfUploadInput) { 
+    compressPdfUploadInput.addEventListener('change', function(event) {
+        selectedCompressPdfFile = event.target.files[0];
+        compressPdfBtn.disabled = true; // Disable by default
+
+        if (selectedCompressPdfFile && selectedCompressPdfFile.type === 'application/pdf') {
+            compressPdfBtn.disabled = false;
+            displayStatus(compressPdfStatus, 'info', `PDF "${selectedCompressPdfFile.name}" selected. Adjust JPEG quality if needed and compress. Original size:(${(selectedCompressPdfFile.size / (1024*1024)).toFixed(2)} MB)`);
+        } else {
+            selectedCompressPdfFile = null;
+            if (event.target.files[0]) {
+                displayStatus(compressPdfStatus, 'error', 'Invalid file type. Please select a .pdf file.');
+            } else {
+                if (compressPdfStatus) compressPdfStatus.style.display = 'none';
+            }
+        }
+    });
+}
+
+if (compressPdfBtn) { 
+    compressPdfBtn.addEventListener('click', async function() {
+        if (!selectedCompressPdfFile) {
+            displayStatus(compressPdfStatus, 'error', 'Please select a PDF file to compress.');
+            return;
+        }
+        const quality = compressQualityInput ? parseFloat(compressQualityInput.value) : 0.75;
+        if (isNaN(quality) || quality < 0.1 || quality > 1.0) {
+            displayStatus(compressPdfStatus, 'error', 'Invalid JPEG quality value. Must be between 0.1 and 1.0.');
+            return;
+        }
+        if (!window.PDFLib) { 
+            displayStatus(compressPdfStatus, 'error', 'PDF-Lib library not loaded. Cannot compress PDF.', false);
+            return;
+        }
+
+        const originalSizeMB = (selectedCompressPdfFile.size / (1024*1024)).toFixed(2);
+        displayStatus(compressPdfStatus, 'info', `<div class="loader" style="margin:0 10px 0 0;"></div>Compressing PDF (original: ${originalSizeMB} MB). This may take time for PDFs with many images...`, false);
+        compressPdfBtn.disabled = true;
+
+        // Ensure all necessary PDFLib components are available
+        const { PDFDocument, PDFName, PDFStream, PDFDict, PDFNumber, PDFRef, PDFRawStream } = PDFLib;
+        if (!PDFDocument || !PDFName || !PDFStream || !PDFDict || !PDFNumber || !PDFRef || !PDFRawStream) {
+            displayStatus(compressPdfStatus, 'error', 'Some PDFLib components are missing. Library might be corrupted.', false);
+            compressPdfBtn.disabled = false; // Re-enable
+            return;
+        }
+        
+        let imagesRecompressedCount = 0;
+        let imagesSkippedCount = 0;
+
+        try {
+            const existingPdfBytes = await selectedCompressPdfFile.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(existingPdfBytes, {
+                ignoreEncryption: true, 
+                updateMetadata: false, // Try to preserve existing metadata structure
+                parseSpeed: PDFLib.ParseSpeeds.Fast // Potentially faster for large files, might be less robust for malformed ones
+            });
+
+            const imageProcessingPromises = [];
+            // Access indirect objects correctly - this might be internal structure of PDFLib
+            // A more public API way would be to iterate pages and then resources.
+            // However, direct iteration of indirect objects is more thorough for finding all images.
+            const indirectObjects = pdfDoc.context.indirectObjects; 
+
+            for (const [ref, pdfObject] of indirectObjects.entries()) {
+                // Check if pdfObject is an instance of PDFRawStream or PDFStream containing an image
+                if (pdfObject instanceof PDFRawStream || pdfObject instanceof PDFStream) {
+                    const dict = pdfObject.dict;
+                    if (!(dict instanceof PDFDict)) continue;
+
+                    const type = dict.get(PDFName.of('Type'));
+                    const subtype = dict.get(PDFName.of('Subtype'));
+
+                    if (type === PDFName.of('XObject') && subtype === PDFName.of('Image')) {
+                        const filter = dict.get(PDFName.of('Filter'));
+                        let isJpeg = false;
+                        if (filter === PDFName.of('DCTDecode')) {
+                            isJpeg = true;
+                        } else if (Array.isArray(filter) && filter.some(f => f === PDFName.of('DCTDecode'))) {
+                            isJpeg = true; 
+                        } else if (filter instanceof PDFName && filter.value === 'DCTDecode') { // Handle PDFName instance
+                            isJpeg = true;
+                        }
+
+
+                        if (isJpeg) {
+                            imageProcessingPromises.push((async () => {
+                                try {
+                                    // Get image bytes. `contents` for PDFRawStream, `decode()` for PDFStream
+                                    let originalImageBytes;
+                                    if (pdfObject instanceof PDFRawStream) {
+                                        originalImageBytes = pdfObject.contents;
+                                    } else { // PDFStream
+                                        originalImageBytes = pdfObject.decode(); // This decodes other filters if present
+                                    }
+                                   
+                                    if (!originalImageBytes || originalImageBytes.length < 2048) { // Skip very small images
+                                        imagesSkippedCount++;
+                                        return;
+                                    }
+                                    
+                                    const smaskRef = dict.get(PDFName.of('SMask'));
+                                    if (smaskRef instanceof PDFRef) { // Skip JPEGs with soft masks to preserve transparency
+                                        imagesSkippedCount++;
+                                        console.warn(`Skipping JPEG (ref: ${ref.toString()}) with SMask to preserve transparency.`);
+                                        return;
+                                    }
+
+                                    const img = new Image();
+                                    const objectURL = URL.createObjectURL(new Blob([originalImageBytes], { type: 'image/jpeg' }));
+                                    
+                                    await new Promise((resolveLoad, rejectLoad) => {
+                                        img.onload = () => { URL.revokeObjectURL(objectURL); resolveLoad(); };
+                                        img.onerror = (e) => { URL.revokeObjectURL(objectURL); rejectLoad(new Error(`Failed to load image for re-compression (ref: ${ref.toString()})`)); };
+                                        img.src = objectURL;
+                                    });
+
+                                    const canvas = document.createElement('canvas');
+                                    canvas.width = img.naturalWidth;
+                                    canvas.height = img.naturalHeight;
+                                    const ctx = canvas.getContext('2d');
+                                    ctx.drawImage(img, 0, 0);
+
+                                    const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                                    const res = await fetch(compressedDataUrl);
+                                    const compressedImageBytes = new Uint8Array(await res.arrayBuffer());
+
+                                    if (compressedImageBytes.length < originalImageBytes.length) {
+                                        // Update the stream content and length
+                                        if (pdfObject instanceof PDFRawStream) {
+                                            pdfObject.contents = compressedImageBytes;
+                                        } else { // PDFStream
+                                            // Re-create stream with new content, preserving dict (except Length and Filter if it changes)
+                                            const newStream = pdfDoc.context.stream(compressedImageBytes, {
+                                                ...dict.asMap(), // Copy existing dictionary entries
+                                                Filter: PDFName.of('DCTDecode'), // Ensure it's set as DCTDecode
+                                                Length: PDFNumber.of(compressedImageBytes.length)
+                                            });
+                                            // This part is tricky: replacing an existing stream object in pdf-lib context
+                                            // A safer way might be to embed this as a new image and update references,
+                                            // but that's much more complex. Direct modification is high-risk.
+                                            // For now, let's assume PDFRawStream is the primary target.
+                                            // If it's PDFStream, we might not be able to modify it as easily.
+                                            // This part needs more robust handling if PDFStream is common here.
+                                            // Most DCTDecoded images might be PDFRawStream if not heavily processed by pdf-lib on load.
+                                            // For now, only update PDFRawStream:
+                                            if (pdfObject instanceof PDFRawStream) {
+                                                 pdfObject.contents = compressedImageBytes;
+                                                 dict.set(PDFName.of('Length'), PDFNumber.of(compressedImageBytes.length));
+                                                 imagesRecompressedCount++;
+                                            } else {
+                                                imagesSkippedCount++; // Skip modifying decoded PDFStream for now
+                                                console.warn(`Skipping modification of already decoded PDFStream image (ref: ${ref.toString()}).`);
+                                            }
+                                        }
+                                    } else {
+                                        imagesSkippedCount++;
+                                    }
+                                } catch (imgError) {
+                                    imagesSkippedCount++;
+                                    console.warn(`Could not process image (ref: ${ref.toString()}). Skipping. Error: `, imgError);
+                                }
+                            })());
+                        }
+                    }
+                }
+            }
+
+            if (imageProcessingPromises.length > 0) {
+                displayStatus(compressPdfStatus, 'info', `<div class="loader" style="margin:0 10px 0 0;"></div>Found ${imageProcessingPromises.length} JPEG images. Processing...`, false);
+                await Promise.all(imageProcessingPromises);
+            } else {
+                 displayStatus(compressPdfStatus, 'info', `No JPEG images suitable for re-compression were found in this PDF. File size may not change significantly.`, true); 
+            }
+            
+            displayStatus(compressPdfStatus, 'info', `<div class="loader" style="margin:0 10px 0 0;"></div>Finalizing PDF...`, false);
+            const pdfBytes = await pdfDoc.save({ 
+                useObjectStreams: true, // Good for compression
+                addDefaultPage: false, 
+                updateFieldAppearances: false 
+            });
+
+            const newSizeMB = (pdfBytes.length / (1024*1024)).toFixed(2);
+            const reduction = selectedCompressPdfFile.size > 0 ? (((selectedCompressPdfFile.size - pdfBytes.length) / selectedCompressPdfFile.size) * 100) : 0;
+            const reductionText = reduction > 0.1 ? `(${reduction.toFixed(1)}% reduction)` : (pdfBytes.length < selectedCompressPdfFile.size ? "(minor reduction)" : "(size increased or no change)");
+
+            const originalFileNameNoExt = selectedCompressPdfFile.name.substring(0, selectedCompressPdfFile.name.lastIndexOf('.')) || selectedCompressPdfFile.name;
+            triggerDownload(new Blob([pdfBytes], {type: 'application/pdf'}), `ProPDFToolkit_Compressed_${originalFileNameNoExt}_q${quality*100}.pdf`);
+
+            let summaryMessage = `PDF compressed! Original: ${originalSizeMB}MB, New: ${newSizeMB}MB ${reductionText}. `;
+            if(imagesRecompressedCount > 0) summaryMessage += `${imagesRecompressedCount} JPEG(s) re-compressed. `;
+            if(imagesSkippedCount > 0) summaryMessage += `${imagesSkippedCount} image(s) skipped. `;
+            summaryMessage += "Text & vector quality preserved."
+            displayStatus(compressPdfStatus, 'success', summaryMessage);
+            
+            if(compressPdfUploadInput) compressPdfUploadInput.value = ''; 
+            selectedCompressPdfFile = null;
+
+        } catch (error) {
+            console.error("Compress PDF Error:", error);
+            let errorMsg = "Error compressing PDF: ";
+             if (error.name === 'PasswordException' || (error.message && error.message.toLowerCase().includes("password"))) {
+                errorMsg += 'The PDF is password-protected or encrypted, preventing modification.';
+            } else if (error.message && error.message.includes("Invalid PDF structure")) {
+                errorMsg += "The PDF structure is invalid or corrupted.";
+            }
+            else {
+                errorMsg += (error.message || "Unknown error. The PDF might be too complex or corrupted. Check console for details.");
+            }
+            displayStatus(compressPdfStatus, 'error', errorMsg, false);
+        } finally {
+            if(compressPdfBtn) compressPdfBtn.disabled = true; // Require re-selection
+        }
+    });
+}
+
+
+// --- Contact Form Logic (Placeholder for client-side demo) ---
+const contactForm = document.getElementById('contactForm');
+const contactFormStatus = document.getElementById('contactFormStatus');
+
+if (contactForm) { // Check if element exists
+    contactForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const nameInput = document.getElementById('contactName');
+        const emailInput = document.getElementById('contactEmail');
+        const messageInput = document.getElementById('contactMessage');
+
+        const name = nameInput ? nameInput.value.trim() : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+        const message = messageInput ? messageInput.value.trim() : '';
+
+        if(!name || !email || !message) {
+            displayStatus(contactFormStatus, 'error', 'Oops! Please fill in all fields before sending.');
+            if (!name && nameInput) nameInput.focus();
+            else if (!email && emailInput) emailInput.focus();
+            else if (!message && messageInput) messageInput.focus();
+            return;
+        }
+        if (!/^\S+@\S+\.\S+$/.test(email)) { // Basic email validation
+             displayStatus(contactFormStatus, 'error', 'Hmm, that email address doesn\'t look quite right. Please check it.');
+             if (emailInput) emailInput.focus();
+            return;
+        }
+
+        displayStatus(contactFormStatus, 'info', '<div class="loader" style="margin:0 10px 0 0;"></div>Sending your message (demo)...', false);
+        const submitButton = contactForm.querySelector('button[type="submit"]');
+        if(submitButton) submitButton.disabled = true;
+        
+        setTimeout(() => {
+            // THIS IS A DEMO. In a real application, send data to a server here.
+            displayStatus(contactFormStatus, 'success', `Thank you, ${name}! Your message has been "sent" (this is a client-side demo). In a real app, this would go to our support team.`);
+            contactForm.reset(); 
+            if(submitButton) submitButton.disabled = false;
+        }, 1500);
+    });
+}
+
+</script>
+
+</body>
+</html>
